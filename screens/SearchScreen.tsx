@@ -1,34 +1,69 @@
-import React, { useState } from 'react';
-import { FlatList, ScrollView, StyleSheet, Image } from 'react-native';
+import React, { useRef, useState } from 'react';
+import {
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Image,
+  Dimensions,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from 'react-native';
 import { plantApiToken } from '../config';
 
 // import EditScreenInfo from '../components/EditScreenInfo';
 import { View } from '../components/Themed';
-import { TextInput, Text, Button, Appbar } from 'react-native-paper';
+import {
+  TextInput,
+  Text,
+  Button,
+  Appbar,
+  Card,
+  Title,
+  Paragraph,
+} from 'react-native-paper';
 
 export default function TabOneScreen() {
   const [text, setText] = useState('');
   const [plants, setPlants] = useState([]);
   const [err, setErr] = useState(null);
+  const [selectedImages, setSelectedImages] = useState<Array<number>>([]);
+
   const onPressSearch = async () => {
     await fetch(
       `https://trefle.io/api/v1/plants/search?token=${plantApiToken.token}&q=${text}`
     )
       .then((res: any) => res.json())
       .then((resp) => {
-        console.log('res', resp.data);
         setPlants(resp.data ? resp.data : []);
       })
       .catch((err) => setErr(err.message));
   };
+
+  const onPressImage = (id: number) => {
+    console.log('id', selectedImages, 'hello', id);
+    if (selectedImages.includes(id)) {
+      setSelectedImages(selectedImages.filter((imgId) => imgId !== id));
+    } else {
+      setSelectedImages([...selectedImages, id]);
+    }
+  };
   const renderItem = ({ item }: any) => {
-    console.log('image_url', item.image_url);
     return (
-      <Image
-        source={{ uri: item.image_url }}
-        resizeMode="cover"
-        style={styles.image}
-      />
+      <Card
+        style={selectedImages.includes(item.id) ? styles.imageSelected : {}}
+      >
+        <TouchableOpacity onPress={() => onPressImage(item.id)}>
+          <Card.Cover source={{ uri: item.image_url }} />
+        </TouchableOpacity>
+        <Card.Content>
+          <View style={{ flexDirection: 'row' }}>
+            <Title style={{ flexWrap: 'wrap', flex: 1 }}>
+              {item.common_name}
+            </Title>
+          </View>
+          <Paragraph>{item.scientific_name}</Paragraph>
+        </Card.Content>
+      </Card>
     );
   };
 
@@ -50,6 +85,7 @@ export default function TabOneScreen() {
         data={plants}
         renderItem={renderItem}
         keyExtractor={(item: any) => item.id}
+        extraData={selectedImages}
       />
     </View>
   );
@@ -60,10 +96,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  searchContainer: {
-    flex: 1,
-    flexDirection: 'row',
-  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -73,10 +105,15 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
   },
-  image: {
+  imageContainer: {
     flex: 1,
-    width: 100,
-    height: 100,
-    margin: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+  },
+  imageSelected: {
+    borderWidth: 6,
+    borderColor: 'white',
+    opacity: 0.5,
   },
 });

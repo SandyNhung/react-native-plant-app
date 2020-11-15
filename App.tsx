@@ -8,9 +8,7 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { auth } from './config';
 
 Amplify.configure({
-  Auth: {
-    auth,
-  },
+  Auth: auth,
 });
 
 export default function App() {
