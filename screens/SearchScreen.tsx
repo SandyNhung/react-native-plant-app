@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { plantApiToken } from '../config';
+import url from '../constants/Variables';
 
 // import EditScreenInfo from '../components/EditScreenInfo';
 import { View } from '../components/Themed';
@@ -30,7 +31,7 @@ export default function TabOneScreen() {
 
   const onPressSearch = async () => {
     await fetch(
-      `https://trefle.io/api/v1/plants/search?token=${plantApiToken.token}&q=${text}`
+      `${url.variables.url}/search?token=${plantApiToken.token}&q=${text}`
     )
       .then((res: any) => res.json())
       .then((resp) => {
@@ -47,6 +48,22 @@ export default function TabOneScreen() {
       setSelectedImages([...selectedImages, id]);
     }
   };
+  const onPressAddImgToProfile = () => {
+    const urls = selectedImages.map(
+      (img) => `${url.variables.url}/${img}?token=${plantApiToken.token}`
+    );
+    console.log('urls', urls);
+    let requests = urls.map((link) => fetch(link));
+    Promise.all(requests)
+      .then((res) => res)
+      .then((data) => {
+        console.log('data', data);
+        return Promise.all(data.map((d) => d.json()));
+      })
+      .then((list) => console.log('list', list))
+      .catch((err) => console.log('err', err));
+  };
+
   const renderItem = ({ item }: any) => {
     return (
       <Card
@@ -79,7 +96,15 @@ export default function TabOneScreen() {
         />
         <Appbar.Action icon="magnify" onPress={onPressSearch} />
       </Appbar.Header>
-
+      {selectedImages[0] && (
+        <Button
+          mode="outlined"
+          onPress={onPressAddImgToProfile}
+          style={{ marginTop: 10 }}
+        >
+          Add to your list
+        </Button>
+      )}
       <FlatList
         numColumns={2}
         data={plants}
