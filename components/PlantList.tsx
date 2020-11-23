@@ -4,6 +4,7 @@ import { StyleSheet, Image, View } from 'react-native';
 
 import Colors from '../constants/Colors';
 import { Text } from './Themed';
+import { PlantInitial } from '../constants/Type';
 
 const PlantList = ({ url }: { url: string }) => {
   return <Image style={styles.imagePlant} source={{ uri: url }} />;

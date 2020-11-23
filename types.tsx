@@ -7,12 +7,13 @@ export type BottomTabParamList = {
   Search: undefined;
   TabTwo: undefined;
   Plants: undefined;
+  PlantData: undefined;
 };
 
 export type TabOneParamList = {
   SearchScreen: undefined;
 };
 
-export type TabTwoParamList = {
-  TabTwoScreen: undefined;
+export type PlantDataParamList = {
+  PlantData: undefined;
 };
