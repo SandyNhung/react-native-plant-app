@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet } from 'react-native';
 import { TextInput } from 'react-native-paper';
 
 import { Text, View } from '../components/Themed';
@@ -20,18 +20,16 @@ export default function PlantData() {
     ));
   };
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.scrollView}>
       <Text style={styles.title}>Plant</Text>
-      {inputList}
-    </View>
+      {inputList()}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     fontSize: 20,
